@@ -7,8 +7,7 @@
 .st_env$sysname <- Sys.info()[["sysname"]]
 
 # Check if system has X11 capability on Linux
-.st_env$noX11 <- Sys.info()[["sysname"]] != "Windows" && 
-  !isTRUE(capabilities("X11"))
+.st_env$noX11 <- FALSE # specific to the no-x11-check branch
 
 .st_env$tmpfiles <- c()
 
@@ -67,8 +66,8 @@ utils::globalVariables(c("."))
     packageStartupMessage("for best results, consider updating pander to its ",
                           "most recent version. You can do so by using \n",
                           "devtools::install_github('rapporter/pander')")
-  if (Sys.info()[["sysname"]] != "Windows" && !isTRUE(capabilities("X11"))) {
-    packageStartupMessage("system has no X11 capabilities, therefore only ",
-                          "ascii graphs will be produced by dfSummary()")
-  }
+  # if (Sys.info()[["sysname"]] != "Windows" && !isTRUE(capabilities("X11"))) {
+  #   packageStartupMessage("system has no X11 capabilities, therefore only ",
+  #                         "ascii graphs will be produced by dfSummary()")
+  # }
 }
