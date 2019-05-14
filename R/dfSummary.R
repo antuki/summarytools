@@ -280,15 +280,11 @@ dfSummary <- function(x,
     }
   }
   
-  if (isTRUE(.st_env$noX11)) {
-    store_imgs <- FALSE
-  } else if (!isTRUE(plain.ascii) && style == "grid" && isTRUE(graph.col)) {
-    if (is.na(tmp.img.dir)) {
-      store_imgs <- FALSE
-      if(!isTRUE(silent)) {
-        message("text graphs are displayed; set 'tmp.img.dir' parameter to ",
-                "activate png graphs")
-      }
+  store_imgs <- FALSE
+  if (!isTRUE(plain.ascii) && style == "grid" && isTRUE(graph.col)) {
+    if (is.na(tmp.img.dir) && !isTRUE(silent)) {
+      message("text graphs are displayed; set 'tmp.img.dir' parameter to ",
+              "activate png graphs")
     } else {
       store_imgs <- TRUE
       dir.create(tmp.img.dir, showWarnings = FALSE)
@@ -299,8 +295,6 @@ dfSummary <- function(x,
         }
       }
     }
-  } else {
-    store_imgs <- FALSE
   }
   
   # Initialize the output data frame -------------------------------------------
@@ -523,9 +517,7 @@ crunch_factor <- function(column_data, email_val) {
     counts_props <- align_numbers_dfs(counts, round(props, round.digits + 2))
     outlist[[2]] <- paste0("\\", counts_props, collapse = "\\\n")
     if (isTRUE(parent.frame()$graph.col) && any(!is.na(column_data))) {
-      if (!isTRUE(.st_env$noX11)) {
-        outlist[[3]] <- encode_graph(counts, "barplot", graph.magnif)
-      }
+      outlist[[3]] <- encode_graph(counts, "barplot", graph.magnif)
       if (isTRUE(parent.frame()$store_imgs)) {
         png_loc <- encode_graph(counts, "barplot", graph.magnif, TRUE)
         outlist[[4]] <- paste0("![](", png_loc, ")")
@@ -568,9 +560,7 @@ crunch_factor <- function(column_data, email_val) {
       tmp_data[which(as.numeric(tmp_data) > max.distinct.values)] <-
         paste("[", n_extra_levels, trs("others"), "]")
       levels(tmp_data)[(max.distinct.values + 2):n_levels] <- NA
-      if (!isTRUE(.st_env$noX11)) {
-        outlist[[3]] <- encode_graph(table(tmp_data), "barplot", graph.magnif)
-      }
+      outlist[[3]] <- encode_graph(table(tmp_data), "barplot", graph.magnif)
       if (isTRUE(parent.frame()$store_imgs)) {
         png_loc <- encode_graph(table(tmp_data), "barplot", graph.magnif, TRUE)
         outlist[[4]] <- paste0("![](", png_loc, ")")
@@ -634,10 +624,8 @@ crunch_character <- function(column_data, email_val) {
     outlist[[2]] <- paste0("\\", counts_props, collapse = "\\\n")
     
     if (isTRUE(parent.frame()$graph.col) && any(!is.na(column_data))) {
-      if (!isTRUE(.st_env$noX11)) {
-        outlist[[3]] <- encode_graph(c(email_val, dups), "barplot", graph.magnif, 
-                                     emails = TRUE)
-      }
+      outlist[[3]] <- encode_graph(c(email_val, dups), "barplot", graph.magnif, 
+                                   emails = TRUE)
       if (isTRUE(parent.frame()$store_imgs)) {
         png_loc <- encode_graph(c(email_val, dups), "barplot", graph.magnif, 
                                 pandoc = TRUE, emails = TRUE)
@@ -662,9 +650,7 @@ crunch_character <- function(column_data, email_val) {
       outlist[[2]] <- paste0("\\", counts_props, collapse = "\\\n")
       if (isTRUE(parent.frame()$graph.col) &&
           any(!is.na(column_data))) {
-        if (!isTRUE(.st_env$noX11)) {
-          outlist[[3]] <- encode_graph(counts, "barplot", graph.magnif)
-        }
+        outlist[[3]] <- encode_graph(counts, "barplot", graph.magnif)
         if (isTRUE(parent.frame()$store_imgs)) {
           png_loc <- encode_graph(counts, "barplot", graph.magnif, TRUE)
           outlist[[4]] <- paste0("![](", png_loc, ")")
@@ -702,9 +688,7 @@ crunch_character <- function(column_data, email_val) {
         names(counts)[max.distinct.values + 1] <-
           paste("[", n_extra_values, trs("others"),"]")
         counts <- counts[1:(max.distinct.values + 1)]
-        if (!isTRUE(.st_env$noX11)) {
-          outlist[[3]] <- encode_graph(counts, "barplot", graph.magnif)
-        }        
+        outlist[[3]] <- encode_graph(counts, "barplot", graph.magnif)
         if (isTRUE(parent.frame()$store_imgs)) {
           png_loc <- encode_graph(counts, "barplot", graph.magnif, TRUE)
           outlist[[4]] <- paste0("![](", png_loc, ")")
@@ -744,11 +728,8 @@ crunch_logical <- function(column_data) {
                            collapse = "\\\n")
     counts_props <- align_numbers_dfs(counts, round(props, round.digits + 2))
     outlist[[2]] <- paste0("\\", counts_props, collapse = "\\\n")
-    if (isTRUE(parent.frame()$graph.col) &&
-        any(!is.na(column_data))) {
-      if (!isTRUE(.st_env$noX11)) {
-        outlist[[3]] <- encode_graph(counts, "barplot", graph.magnif)
-      }
+    if (isTRUE(parent.frame()$graph.col) && any(!is.na(column_data))) {
+      outlist[[3]] <- encode_graph(counts, "barplot", graph.magnif)
       if (isTRUE(parent.frame()$store_imgs)) {
         png_loc <- encode_graph(counts, "barplot", graph.magnif, TRUE)
         outlist[[4]] <- paste0("![](", png_loc, ")")
@@ -889,9 +870,7 @@ crunch_numeric <- function(column_data, is_barcode) {
     
     if (isTRUE(parent.frame()$graph.col)) {
       if (length(counts) <= max.distinct.values) {
-        if (!isTRUE(.st_env$noX11)) {
-          outlist[[3]] <- encode_graph(counts, "barplot", graph.magnif)
-        }
+        outlist[[3]] <- encode_graph(counts, "barplot", graph.magnif)
         if (isTRUE(parent.frame()$store_imgs)) {
           png_loc <- encode_graph(counts, "barplot", graph.magnif, TRUE)
           outlist[[4]] <- paste0("![](", png_loc, ")")
@@ -900,15 +879,11 @@ crunch_numeric <- function(column_data, is_barcode) {
         }
         
         if (isTRUE(extra_space)) {
-          if (!isTRUE(.st_env$noX11)) {
-            outlist[[3]] <- paste0(outlist[[3]], "\n\n")
-          }
+          outlist[[3]] <- paste0(outlist[[3]], "\n\n")
           outlist[[4]] <- paste0(outlist[[4]], " \\ \n \\")
         }
       } else {
-        if (!isTRUE(.st_env$noX11)) {
-          outlist[[3]] <- encode_graph(column_data, "histogram", graph.magnif)
-        }
+        outlist[[3]] <- encode_graph(column_data, "histogram", graph.magnif)
         if (isTRUE(parent.frame()$store_imgs)) {
           png_loc <- encode_graph(column_data, "histogram", graph.magnif, TRUE)
           outlist[[4]] <- paste0("![](", png_loc, ")")
@@ -952,9 +927,7 @@ crunch_time_date <- function(column_data) {
       props <- round(prop.table(counts), round.digits + 2)
       counts_props <- align_numbers_dfs(counts, props)
       outlist[[2]] <- paste(counts_props, collapse = "\\\n")
-      if (!isTRUE(.st_env$noX11)) {
-        outlist[[3]] <- encode_graph(counts, "barplot", graph.magnif)
-      }
+      outlist[[3]] <- encode_graph(counts, "barplot", graph.magnif)
       if (isTRUE(parent.frame()$store_imgs)) {
         png_loc <- encode_graph(counts, "barplot", graph.magnif, TRUE)
         outlist[[4]] <- paste0("![](", png_loc, ")")
@@ -989,9 +962,7 @@ crunch_time_date <- function(column_data) {
       
       if (isTRUE(parent.frame()$graph.col)) {
         tmp <- as.numeric(column_data)[!is.na(column_data)]
-        if (!isTRUE(.st_env$noX11)) {
-          outlist[[3]] <- encode_graph(tmp - mean(tmp), "histogram", graph.magnif)
-        }
+        outlist[[3]] <- encode_graph(tmp - mean(tmp), "histogram", graph.magnif)
         if (isTRUE(parent.frame()$store_imgs)) {
           png_loc <- encode_graph(tmp - mean(tmp), "histogram", graph.magnif, TRUE)
           outlist[[4]] <- paste0("![](", png_loc, ")")
@@ -1015,8 +986,6 @@ crunch_other <- function(column_data) {
   
   max.distinct.values <- parent.frame()$max.distinct.values
   round.digits        <- parent.frame()$round.digits
-  #graph.magnif        <- parent.frame()$graph.magnif
-  #max.string.width    <- parent.frame()$max.string.width
   
   counts <- table(column_data, useNA = "no")
   

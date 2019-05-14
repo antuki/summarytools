@@ -101,18 +101,19 @@
 #' } 
 #' @keywords utilities
 #' @importFrom utils read.delim edit write.csv
-#' @importFrom tcltk tclvalue tk_messageBox tkgetSaveFile
 #' @importFrom checkmate check_path_for_output
 #' @export
 define_keywords <- function(...) {
   mc <- match.call()
+  
   if (length(mc) == 1 && !isTRUE(interactive())) {
     stop("R session not interactive; use arguments to define keywords, ",
          "or see ?use_custom_lang to use an external file to define all ",
          "keywords at once")
   }
-  if (length(mc) == 1 && isTRUE(.st_env$noX11)) {
-    message("This R session does not support X11 devices; use arguments to ",
+  
+  if (length(mc) == 1 && !isTRUE(capabilities("tcltk"))) {
+    message("This R session does not support tcltk devices; use arguments to ",
             "redefine specific keywords (see ?define_keywords), or turn to the ",
             "use_custom_lang() function which allows redefining all keywords at ",
             "once using a csv file")
@@ -163,8 +164,8 @@ define_keywords <- function(...) {
   
   if (interactive() && length(mc) == 1) {
     
-    # GUI capabilities: no
-    if (isTRUE(.st_env$noX11)) {
+    # no tcltk
+    if (!isTRUE(capabilities("tcltk"))) {
       resp <- " "
       while (!resp %in% c("Y", "N", "")) {
         resp <- toupper(
@@ -187,23 +188,24 @@ define_keywords <- function(...) {
         }
       }
     } else {
-      # GUI capabilities: yes
-      resp <- tk_messageBox(type = "yesno", 
-                            message = "Export language file for later use?",
-                            caption = "Keywords Successfully Updated")
+      # tcltk: yes
+      resp <-
+        tcltk::tk_messageBox(type = "yesno", 
+                             message = "Export language file for later use?",
+                             caption = "Keywords Successfully Updated")
       if (resp == "yes") {
         while(!filename_ok) {
-          filename <- tclvalue(
-            tkgetSaveFile(initialfile = "custom_lang.csv", 
-                          initialdir = "~",
-                          filetypes = "{{csv files} {*.csv}}")
+          filename <- tcltk::tclvalue(
+            tcltk::tkgetSaveFile(initialfile = "custom_lang.csv", 
+                                 initialdir = "~",
+                                 filetypes = "{{csv files} {*.csv}}")
           )
           
           if (filename != "") {
             filename <- sub("(.csv)+$", "\\1", paste0(filename, ".csv"))
             filename <- normalizePath(filename, mustWork = FALSE)
             if (!isTRUE(check_path_for_output(filename, overwrite = TRUE))) {
-              rv <- tk_messageBox(
+              rv <- tcltk::tk_messageBox(
                 type = "okcancel", 
                 message = "Invalid file name or location"
               )

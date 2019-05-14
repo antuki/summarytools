@@ -6,10 +6,6 @@
 # Determine OS : Windows | Linux | Darwin
 .st_env$sysname <- Sys.info()[["sysname"]]
 
-# Check if system has X11 capability on Linux
-.st_env$noX11 <- Sys.info()[["sysname"]] != "Windows" && 
-  !isTRUE(capabilities("X11"))
-
 .st_env$tmpfiles <- c()
 
 # Initialize list used by view() when printing an object of class "by"

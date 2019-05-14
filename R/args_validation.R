@@ -305,11 +305,11 @@ check_arguments <- function(mc, dotArgs) {
       errmsg %+=% "'tmp.img.dir' must have at least 1 and at most 5 characters"
     }
     
-    if ("tmp.img.dir" %in% names(mc) && !is.na(pf$tmp.img.dir) &&
-        isTRUE(.st_env$noX11)) {
-      message("'tmp.img.dir' will be ignored since system has no X11 ",
-              "capabilities")
-    }
+    # if ("tmp.img.dir" %in% names(mc) && !is.na(pf$tmp.img.dir) &&
+    #     isTRUE(.st_env$noX11)) {
+    #   message("'tmp.img.dir' will be ignored since system has no X11 ",
+    #           "capabilities")
+    # }
   }
   return(errmsg)
 }

@@ -16,15 +16,15 @@
 #'
 #' @keywords utilities
 #' @importFrom utils read.csv
-#' @importFrom tcltk tclvalue tkgetOpenFile
 #' @export
 use_custom_lang <- function(file) {
   
   if (!"file" %in% names(match.call())) {
-    if (interactive() && !isTRUE(.st_env$noX11)) {
+    if (interactive() && isTRUE(capabilities("tcltk"))) {
       file <- character()
-      file <- tclvalue(tkgetOpenFile(initialdir = "~",
-                                     filetypes = "{{csv files} {*.csv}}"))
+      file <- tcltk::tclvalue(
+        tcltk::tkgetOpenFile(initialdir = "~",
+                             filetypes = "{{csv files} {*.csv}}"))
       if (file == "") {
         stop("operation cancelled")
       }
