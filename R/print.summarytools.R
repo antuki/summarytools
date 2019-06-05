@@ -70,7 +70,8 @@
 #'    \itemize{
 #'      \item \code{style}
 #'      \item \code{round.digits} (except for \code{\link{dfSummary}} objects)
-#'      \item \code{plain.ascii}
+#'      \item \code{round.digits.count} (except for \code{\link{dfSummary}} objects)
+#'      #'      \item \code{plain.ascii}
 #'      \item \code{justify}
 #'      \item \code{headings}
 #'      \item \code{display.labels}
@@ -330,7 +331,7 @@ print.summarytools <- function(x,
   # freq, descr, ctable and dfSummary (we don't include print/view args)
   overrided_args <- character()
   # Todo: remove "omit.headings" in next release
-  for (format_element in c("style", "plain.ascii", "round.digits",
+  for (format_element in c("style", "plain.ascii", "round.digits","round.digits.count",
                            "justify", "cumul", "totals", "report.nas",
                            "missing", "headings", "display.labels",
                            "display.type", "varnumbers", "labels.col", 
@@ -353,7 +354,7 @@ print.summarytools <- function(x,
   # Global options that apply to all types of summarytools objects
   # This is useful in a case where some global option was changed after the
   # object was created.
-  for (format_element in c("style", "plain.ascii", "round.digits", 
+  for (format_element in c("style", "plain.ascii", "round.digits", "round.digits.count",
                            "headings", "display.labels")) {
     if (!format_element %in% c(overrided_args, names(attr(x, "fn_call")))) {
       # Todo: following condition is to be removed in further releases
@@ -362,6 +363,8 @@ print.summarytools <- function(x,
         if (!(format_element == "style" &&
               attr(x, "st_type") == "dfSummary") &&
             !(format_element == "round.digits" && 
+              attr(x, "st_type") == "ctable") &&
+            !(format_element == "round.digits.count" && 
               attr(x, "st_type") == "ctable")) {
           attr(x, "format_info")[[format_element]] <- st_options(format_element)
         }

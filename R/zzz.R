@@ -28,6 +28,7 @@ utils::globalVariables(c("."))
             list("style"                  = "simple",
                  "plain.ascii"            = TRUE,
                  "round.digits"           = 2,
+                 "round.digits.count"           = 2,
                  "headings"               = TRUE,
                  "footnote"               = "default",
                  "display.labels"         = TRUE,

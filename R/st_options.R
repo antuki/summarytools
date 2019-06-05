@@ -20,6 +20,7 @@
 #'   that its value will automatically be set to \code{FALSE} whenever
 #'   \code{style} is set to \dQuote{rmarkdown}).
 #' @param round.digits Numeric. Defaults to \code{2}.
+#' @param round.digits.count Numeric. Defaults to \code{0}.
 #' @param headings Logical. Set to \code{FALSE} to remove all headings from
 #'   outputs. Only the tables will be printed out, except when \code{\link{by}}
 #'   or \code{\link{lapply}} are used. In that case, the variable or the group
@@ -124,6 +125,7 @@ st_options <- function(option                 = NULL,
                        style                  = "simple", 
                        plain.ascii            = TRUE, 
                        round.digits           = 2,
+                       round.digits.count     = 0,
                        headings               = TRUE, 
                        footnote               = "default", 
                        display.labels         = TRUE, 
@@ -203,6 +205,7 @@ st_options <- function(option                 = NULL,
               list("style"                  = "simple",
                    "plain.ascii"            = TRUE,
                    "round.digits"           = 2,
+                   "round.digits.count"     = 0,
                    "headings"               = TRUE,
                    "footnote"               = "default",
                    "display.labels"         = TRUE,

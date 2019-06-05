@@ -21,6 +21,8 @@
 #' @param round.digits Number of significant digits to display. Defaults to
 #'   \code{1}. To change this default value globally, see 
 #'   \code{\link{st_options}}.
+#' @param round.digits.count Number of significant digits for count to display. Defaults #' to \code{0}. To change this default value globally, see 
+#'   \code{\link{st_options}}.
 #' @param justify String indicating alignment of columns; one of \dQuote{l} 
 #'   (left) \dQuote{c} (center), or \dQuote{r} (right). Defaults to \dQuote{r}.
 #' @param plain.ascii Logical. \code{\link[pander]{pander}} argument; when
@@ -91,6 +93,7 @@ ctable <- function(x, y,
                    totals          = st_options("ctable.totals"), 
                    style           = st_options("style"), 
                    round.digits    = 1,
+                   round.digits.count = 0,
                    justify         = "right", 
                    plain.ascii     = st_options("plain.ascii"),
                    headings        = st_options("headings"),
@@ -346,6 +349,7 @@ ctable <- function(x, y,
 
   attr(output, "format_info") <-  list(style          = style,
                                        round.digits   = round.digits,
+                                       round.digits.count  = round.digits.count,
                                        plain.ascii    = plain.ascii,
                                        justify        = justify,
                                        totals         = totals,

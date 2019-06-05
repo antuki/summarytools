@@ -88,7 +88,8 @@ The following additional arguments can be used to override
    \itemize{
      \item \code{style}
      \item \code{round.digits} (except for \code{\link{dfSummary}} objects)
-     \item \code{plain.ascii}
+     \item \code{round.digits.count} (except for \code{\link{dfSummary}} objects)
+     #'      \item \code{plain.ascii}
      \item \code{justify}
      \item \code{headings}
      \item \code{display.labels}

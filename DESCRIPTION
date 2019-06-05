@@ -27,7 +27,8 @@ Imports:
   tcltk,
   tibble,
   tidyr,
-  utils
+  utils,
+  questionr
 Suggests:
   knitr,
   magrittr,

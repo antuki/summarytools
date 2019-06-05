@@ -5,6 +5,7 @@
 \title{Data frame Summary}
 \usage{
 dfSummary(x, round.digits = st_options("round.digits"),
+  round.digits.count = st_options("round.digits.count"),
   varnumbers = st_options("dfSummary.varnumbers"),
   labels.col = st_options("dfSummary.labels.col"),
   valid.col = st_options("dfSummary.valid.col"),
@@ -14,7 +15,7 @@ dfSummary(x, round.digits = st_options("round.digits"),
   style = st_options("dfSummary.style"),
   plain.ascii = st_options("plain.ascii"), justify = "left",
   col.widths = NA, headings = st_options("headings"),
-  display.labels = st_options("display.labels"),
+  display.labels = st_options("display.labels"), column_weight = NULL,
   max.distinct.values = 10, trim.strings = FALSE,
   max.string.width = 25, split.cells = 40, split.tables = Inf,
   tmp.img.dir = st_options("tmp.img.dir"),
@@ -25,6 +26,9 @@ dfSummary(x, round.digits = st_options("round.digits"),
 
 \item{round.digits}{Number of significant digits to display. Defaults to
 \code{2} and can be set globally; see \code{\link{st_options}}.}
+
+\item{round.digits.count}{Number of significant digits to display for the count.
+Defaults to  \code{0} and can be set globally; see \code{\link{st_options}}.}
 
 \item{varnumbers}{Logical. Should the first column contain variable number?
 Defaults to \code{TRUE}. Can be set globally; see \code{\link{st_options}},
@@ -81,6 +85,9 @@ default value globally, see \code{\link{st_options}}.}
 \item{display.labels}{Logical. Should data frame label be displayed in the
 title section?  Default is \code{TRUE}. To change this default value
 globally, see \code{\link{st_options}}.}
+
+\item{column_weight}{Character. Name of the column of weights in the data.frame. 
+Default is \code{NULL} (no weight)}
 
 \item{max.distinct.values}{The maximum number of values to display
 frequencies for. If variable has more distinct values than this number, the

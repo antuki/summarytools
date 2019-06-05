@@ -31,6 +31,11 @@ check_arguments <- function(mc, dotArgs) {
     errmsg %+=% "'round.digits' must be a whole number"
   }
   
+  if ("round.digits.count" %in% names(mc) && 
+      !isTRUE(test_int(pf$round.digits.count))) {
+    errmsg %+=% "'round.digits.count' must be a whole number"
+  }
+  
   if ("style" %in% names(mc)) {
     if (caller %in% c("freq", "descr", "ctable")) {
       if (!isTRUE(test_choice(pf$style, 
@@ -333,6 +338,10 @@ check_arguments_st_options <- function(mc) {
 
   if ("round.digits" %in% names(mc) && !isTRUE(test_int(pf$round.digits))) {
     errmsg %+=% "'round.digits' must be a whole number"
+  }
+  
+  if ("round.digits.count" %in% names(mc) && !isTRUE(test_int(pf$round.digits.count))) {
+    errmsg %+=% "'round.digits.count' must be a whole number"
   }
   
   if ("plain.ascii" %in% names(mc) && 

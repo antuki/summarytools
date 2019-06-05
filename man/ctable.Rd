@@ -6,7 +6,7 @@
 \usage{
 ctable(x, y, prop = st_options("ctable.prop"), useNA = "ifany",
   totals = st_options("ctable.totals"), style = st_options("style"),
-  round.digits = 1, justify = "right",
+  round.digits = 1, round.digits.count = 0, justify = "right",
   plain.ascii = st_options("plain.ascii"),
   headings = st_options("headings"),
   display.labels = st_options("display.labels"), split.tables = Inf,
@@ -37,6 +37,9 @@ see \code{\link{st_options}}.}
 
 \item{round.digits}{Number of significant digits to display. Defaults to
 \code{1}. To change this default value globally, see 
+\code{\link{st_options}}.}
+
+\item{round.digits.count}{Number of significant digits for count to display. Defaults #' to \code{0}. To change this default value globally, see 
 \code{\link{st_options}}.}
 
 \item{justify}{String indicating alignment of columns; one of \dQuote{l} 

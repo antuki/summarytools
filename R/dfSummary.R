@@ -7,6 +7,8 @@
 #' @param x A data frame.
 #' @param round.digits Number of significant digits to display. Defaults to
 #'   \code{2} and can be set globally; see \code{\link{st_options}}.
+#' @param round.digits.count Number of significant digits to display for the count.
+#' Defaults to  \code{0} and can be set globally; see \code{\link{st_options}}.
 #' @param varnumbers Logical. Should the first column contain variable number?
 #'   Defaults to \code{TRUE}. Can be set globally; see \code{\link{st_options}},
 #'   option \dQuote{dfSummary.varnumbers}.
@@ -51,6 +53,8 @@
 #' @param display.labels Logical. Should data frame label be displayed in the
 #'   title section?  Default is \code{TRUE}. To change this default value
 #'   globally, see \code{\link{st_options}}.
+#' @param column_weight Character. Name of the column of weights in the data.frame. 
+#'  Default is \code{NULL} (no weight)
 #' @param max.distinct.values The maximum number of values to display
 #'   frequencies for. If variable has more distinct values than this number, the
 #'   remaining frequencies will be reported as a whole, along with the number of
@@ -142,6 +146,7 @@
 #' @importFrom stats start end
 #' @export
 dfSummary <- function(x, round.digits = st_options("round.digits"),
+                      round.digits.count = st_options("round.digits.count"),
                       varnumbers = st_options("dfSummary.varnumbers"),
                       labels.col = st_options("dfSummary.labels.col"),
                       valid.col = st_options("dfSummary.valid.col"),
@@ -153,6 +158,7 @@ dfSummary <- function(x, round.digits = st_options("round.digits"),
                       justify = "left", col.widths = NA, 
                       headings = st_options("headings"),
                       display.labels = st_options("display.labels"),
+                      column_weight = NULL,
                       max.distinct.values = 10, 
                       trim.strings = FALSE,
                       max.string.width = 25, 
@@ -258,6 +264,10 @@ dfSummary <- function(x, round.digits = st_options("round.digits"),
   
   n_tot <- nrow(x)
   
+  # Column of weight -----------------------------------------------------------
+  if(!is.null(column_weight)){
+    column_weight <- x[[column_weight]]
+  }
   
   # iterate over columns of x --------------------------------------------------
   
@@ -314,32 +324,32 @@ dfSummary <- function(x, round.digits = st_options("round.digits"),
     
     # Factors: display a column of levels and a column of frequencies ----------
     if (is.factor(column_data)) {
-      output[i,4:7] <- crunch_factor(column_data)
+      output[i,4:7] <- crunch_factor(column_data, column_weight)
     }
     
     # Character data: display frequencies whenever possible --------------------
     else if (is.character(column_data)) {
-      output[i,4:7] <- crunch_character(column_data, email_val)
+      output[i,4:7] <- crunch_character(column_data, column_weight, email_val)
     }
     
     # Logical data -------------------------------------------------------------
     else if (is.logical(column_data)) {
-      output[i,4:7] <- crunch_logical(column_data)
+      output[i,4:7] <- crunch_logical(column_data, column_weight)
     }
     
     # Numeric data, display a column of descriptive stats + column of freqs ----
     else if (is.numeric(column_data)) {
-      output[i,4:7] <- crunch_numeric(column_data, is.character(barcode_type))
+      output[i,4:7] <- crunch_numeric(column_data, column_weight, is.character(barcode_type))
     }
     
     # Time/date data -----------------------------------------------------------
     else if (inherits(column_data, c("Date", "POSIXct", "difftime"))) {
-      output[i,4:7] <- crunch_time_date(column_data)
+      output[i,4:7] <- crunch_time_date(column_data, column_weight)
     }
     
     # Data does not fit in previous categories ---------------------------------
     else {
-      output[i,4:7] <- crunch_other(column_data)
+      output[i,4:7] <- crunch_other(column_data, column_weight)
     }
     
     output[i,8] <-
@@ -419,7 +429,7 @@ dfSummary <- function(x, round.digits = st_options("round.digits"),
 }
 
 #' @keywords internal
-crunch_factor <- function(column_data, email_val) {
+crunch_factor <- function(column_data, column_weight, email_val) {
   
   outlist <- list()
   outlist[[1]] <- ""
@@ -434,7 +444,8 @@ crunch_factor <- function(column_data, email_val) {
   n_valid             <- parent.frame()$n_valid
     
   n_levels <- nlevels(column_data)
-  counts   <- table(column_data, useNA = "no")
+  #counts   <- table(column_data, useNA = "no")
+  counts <- questionr::wtd.table(column_data, weights = column_weight)
   props    <- prop.table(counts)
   
   if (n_levels == 0 && n_valid == 0) {
@@ -522,7 +533,7 @@ crunch_factor <- function(column_data, email_val) {
 
 #' @keywords internal
 #' @importFrom dplyr n_distinct
-crunch_character <- function(column_data, email_val) {
+crunch_character <- function(column_data, column_weight, email_val) {
   
   outlist <- list()
   outlist[[1]] <- ""
@@ -534,6 +545,7 @@ crunch_character <- function(column_data, email_val) {
   max.distinct.values <- parent.frame()$max.distinct.values
   graph.magnif        <- parent.frame()$graph.magnif
   round.digits        <- parent.frame()$round.digits
+  round.digits.count  <- parent.frame()$round.digits.count
   n_valid             <- parent.frame()$n_valid
   
   if (isTRUE(parent.frame()$trim.strings)) {
@@ -579,7 +591,8 @@ crunch_character <- function(column_data, email_val) {
 
   } else {
     
-    counts <- table(column_data, useNA = "no")
+    #counts   <- table(column_data, useNA = "no")
+    counts <- questionr::wtd.table(column_data, weights = column_weight)
     props <- prop.table(counts)
     
     if (length(counts) <= max.distinct.values + 1) {
@@ -651,7 +664,7 @@ crunch_character <- function(column_data, email_val) {
 }
 
 #' @keywords internal
-crunch_logical <- function(column_data) {
+crunch_logical <- function(column_data, column_weight) {
   
   outlist <- list()
   outlist[[1]] <- ""
@@ -661,12 +674,14 @@ crunch_logical <- function(column_data) {
   
   graph.magnif        <- parent.frame()$graph.magnif
   round.digits        <- parent.frame()$round.digits
+  round.digits.count  <- parent.frame()$round.digits.count
   
   if (parent.frame()$n_miss == parent.frame()$n_tot) {
     outlist[[1]] <- paste0(trs("all.nas"), "\n") # \n to circumvent pander bug
   } else {
     
-    counts <- table(column_data, useNA = "no")
+    #counts   <- table(column_data, useNA = "no")
+    counts <- questionr::wtd.table(column_data, weights = column_weight)
     props <- prop.table(counts)
     
     outlist[[1]] <- paste0(seq_along(counts), "\\. ", names(counts),
@@ -696,7 +711,7 @@ crunch_logical <- function(column_data) {
 
 #' @importFrom stats IQR median ftable sd
 #' @keywords internal
-crunch_numeric <- function(column_data, is_barcode) {
+crunch_numeric <- function(column_data, column_weight, is_barcode) {
   
   outlist <- list()
   outlist[[1]] <- ""
@@ -707,12 +722,13 @@ crunch_numeric <- function(column_data, is_barcode) {
   max.distinct.values <- parent.frame()$max.distinct.values
   graph.magnif        <- parent.frame()$graph.magnif
   round.digits        <- parent.frame()$round.digits
+  round.digits.count  <- parent.frame()$round.digits.count
   
   if (parent.frame()$n_miss == parent.frame()$n_tot) {
     outlist[[1]] <- paste0(trs("all.nas"), "\n")
   } else {
-    counts <- table(column_data, useNA = "no")
-    
+    #counts   <- table(column_data, useNA = "no")
+    counts <- questionr::wtd.table(column_data, weights = column_weight)
     if (length(counts) == 1) {
       outlist[[1]] <- paste(1, trs("distinct.value"))
     } else {
@@ -855,7 +871,7 @@ crunch_numeric <- function(column_data, is_barcode) {
 
 #' @importFrom lubridate as.period interval
 #' @keywords internal
-crunch_time_date <- function(column_data) {
+crunch_time_date <- function(column_data, column_weight) {
   
   outlist <- list()
   outlist[[1]] <- ""
@@ -867,12 +883,13 @@ crunch_time_date <- function(column_data) {
   max.distinct.values <- parent.frame()$max.distinct.values
   graph.magnif        <- parent.frame()$graph.magnif
   round.digits        <- parent.frame()$round.digits
+  round.digits.count  <- parent.frame()$round.digits.count
   
   if (parent.frame()$n_miss == parent.frame()$n_tot) {
     outlist[[1]] <- paste0(trs("all.nas"), "\n")
   } else {
-    
-    counts <- table(column_data, useNA = "no")
+    #counts   <- table(column_data, useNA = "no")
+    counts <- questionr::wtd.table(column_data, weights = column_weight)
     
     # Report all frequencies when allowed by max.distinct.values
     if (length(counts) <= max.distinct.values) {
@@ -934,7 +951,7 @@ crunch_time_date <- function(column_data) {
 }
 
 #' @keywords internal
-crunch_other <- function(column_data) {
+crunch_other <- function(column_data, column_weight) {
   
   outlist <- list()
   outlist[[1]] <- ""
@@ -944,10 +961,13 @@ crunch_other <- function(column_data) {
   
   max.distinct.values <- parent.frame()$max.distinct.values
   round.digits        <- parent.frame()$round.digits
+  round.digits.count  <- parent.frame()$round.digits.count
+  
   #graph.magnif        <- parent.frame()$graph.magnif
   #max.string.width    <- parent.frame()$max.string.width
   
-  counts <- table(column_data, useNA = "no")
+  #counts   <- table(column_data, useNA = "no")
+  counts <- questionr::wtd.table(column_data, weights = column_weight)
   
   if (parent.frame()$n_miss == parent.frame()$n_tot) {
     outlist[[1]] <- paste0(trs("all.nas"), "\n")
@@ -968,13 +988,30 @@ crunch_other <- function(column_data) {
 # Utility functions ------------------------------------------------------------
 #' @keywords internal
 align_numbers_dfs <- function(counts, props) {
-  maxchar_cnt <- nchar(as.character(max(counts)))
-  maxchar_pct <- nchar(sprintf(paste0("%.",parent.frame()$round.digits - 1, "f"), 
-                               max(props*100)))
-  paste(sprintf(paste0("%", maxchar_cnt, "i"), counts),
-        sprintf(paste0("(%", maxchar_pct, ".", parent.frame()$round.digits - 1,
-                       "f%%)"), props*100))
+  
+  #parent.frame not working a debuguer
+  round.digits.count <- 1
+  
+  maxchar_cnt <- nchar(as.character(round(max(counts),round.digits.count)))
+  maxchar_pct <- nchar(as.character(round(max(props*100),parent.frame()$round.digits)))
+  paste(sprintf(paste0("%", maxchar_cnt, ".", round.digits.count, "f"), counts),
+        sprintf(paste0("(%", maxchar_pct, ".", parent.frame()$round.digits,
+                       "f%%)"), props*100)
+        
+        )
 }
+
+# align_numbers_dfs <- function(counts, props) {
+#   
+#   maxchar_cnt <- nchar(as.character(max(counts)))
+#   maxchar_pct <- nchar(sprintf(paste0("%.",parent.frame()$round.digits - 1, "f"), 
+#                                max(props*100)))
+#   paste(sprintf(paste0("%", maxchar_cnt, "i"), counts),
+#         sprintf(paste0("(%", maxchar_pct, ".", parent.frame()$round.digits - 1,
+#                        "f%%)"), props*100))
+# }
+
+#align_numbers_dfs(counts=c(9,10.5),props=c(0.2,0.1555))
 
 #' @importFrom RCurl base64Encode
 #' @importFrom graphics barplot hist par text plot.new

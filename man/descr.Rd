@@ -6,6 +6,7 @@
 \usage{
 descr(x, stats = st_options("descr.stats"), na.rm = TRUE,
   round.digits = st_options("round.digits"),
+  round.digits.count = st_options("round.digits.count"),
   transpose = st_options("descr.transpose"),
   style = st_options("style"), plain.ascii = st_options("plain.ascii"),
   justify = "right", headings = st_options("headings"),
@@ -28,6 +29,9 @@ descr(x, stats = st_options("descr.stats"), na.rm = TRUE,
 
 \item{round.digits}{Number of significant digits to display. Defaults to
 \code{2}, and can be set globally (see \code{\link{st_options}}).}
+
+\item{round.digits.count}{Number of significant digits to display for count. Defaults to
+\code{0}, and can be set globally (see \code{\link{st_options}}).}
 
 \item{transpose}{Logical. Makes variables appears as columns, and stats as
 rows. Defaults to \code{FALSE}. To change this default value, see
