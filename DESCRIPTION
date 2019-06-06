@@ -28,7 +28,8 @@ Imports:
   tibble,
   tidyr,
   utils,
-  questionr
+  questionr,
+  spatstat
 Suggests:
   knitr,
   magrittr,

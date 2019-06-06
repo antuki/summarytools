@@ -146,7 +146,7 @@ print.summarytools <- function(x,
                                silent         = FALSE, 
                                footnote       = st_options("footnote"),
                                max.tbl.height = Inf,
-                               escape.pipe    = st_options("escape.pipe"), 
+                               escape.pipe    = st_options("escape.pipe"),
                                ...) {
 
   # object is a list, either created
@@ -335,7 +335,7 @@ print.summarytools <- function(x,
                            "justify", "cumul", "totals", "report.nas",
                            "missing", "headings", "display.labels",
                            "display.type", "varnumbers", "labels.col", 
-                           "graph.col", "col.widths", "na.col", "valid.col", 
+                           "graph.col", "col.widths", "header_perso","header_perso_txt", "na.col", "valid.col", 
                            "split.tables", "omit.headings")) {
     if (format_element %in% names(dotArgs)) {
       if (format_element == "omit.headings") {
@@ -489,11 +489,18 @@ print.summarytools <- function(x,
     # Remove doubled linefeed
     res[[length(res)]] <- 
       sub("^\\n\\n", "\n", res[[length(res)]])
-    
     file <- normalizePath(file, mustWork = FALSE)
-    cat(do.call(paste0, res), file = file, append = append)
     
-    if (file != "" && !isTRUE(silent)) {
+    ####### header personnalisé Kim #####
+    if(attr(x, "st_type")=="dfSummary" && attr(x, "format_info")$header_perso){
+       ajout <- header_perso_func(x)
+       cat(do.call(paste0, c(ajout,res)), file = file, append = append)
+    }else{
+      cat(do.call(paste0, res), file = file, append = append)
+    }
+    
+
+      if (file != "" && !isTRUE(silent)) {
       if (isTRUE(append))
         message("Output file appended: ", file)
       else

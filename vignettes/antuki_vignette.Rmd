@@ -1,0 +1,85 @@
+---
+title: "New propositions of functionnalities for summarytools"
+author: "antuki"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette: 
+    css: 
+    - !expr system.file("rmarkdown/templates/html_vignette/resources/vignette.css", package = "rmarkdown")
+vignette: >
+  %\VignetteIndexEntry{Recommendations for Rmarkdown}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include=FALSE}
+library(knitr)
+opts_chunk$set(comment=NA, prompt=FALSE, cache=FALSE, echo=TRUE, results='asis')
+```
+```{r, echo=FALSE}
+library(summarytools)
+st_css()
+
+st_options(bootstrap.css     = FALSE,       # Already part of the theme so no need for it
+           plain.ascii       = FALSE,       # One of the essential settings
+           style             = "rmarkdown", # Idem.
+           dfSummary.silent  = TRUE,        # Suppresses messages about temporary files
+           footnote          = NA,          # Keeping the results minimalistic
+           subtitle.emphasis = FALSE)       # For the vignette theme, this gives
+                                            # much better results. Your mileage may vary.
+
+```
+
+
+
+
+Préparation des données :
+
+```{r eval=FALSE}
+library(dplyr)
+library(questionr)
+data(hdv2003)
+hdv2003 <- hdv2003 %>% select(sexe,poids)
+```
+
+```{r include=FALSE}
+library(dplyr)
+library(questionr)
+data(hdv2003)
+hdv2003 <- hdv2003 %>% select(sexe,poids)
+```
+
+Aperçu des stats desc : 
+
+```{r}
+print(wtd.table(hdv2003$sexe, weights=hdv2003$poids))
+print(wtd.table(hdv2003$sexe))
+```
+
+Reproduction avec dfSummary
+
+```{r}
+df <- dfSummary(hdv2003)
+dfSummary(hdv2003,column_weight = "poids")
+```
+
+Test d'une fonction simplifiée : 
+```{r}
+data(hdv2003)
+```
+
+Sans variable de croisement
+```{r}
+dfSummary_simple(bdd=hdv2003,nom_var="clso",nom_croisement=NULL,poids="poids",filtres="freres.soeurs!=8",header_perso=TRUE)
+```
+
+Avec variable de croisement
+```{r}
+#dfSummary_simple(bdd=hdv2003,nom_var="clso",nom_croisement="occup",poids="poids",filtres="freres.soeurs!=8")
+```
+
+Tester header personnalisé
+
+```{r}
+#dfSummary(hdv2003,headings=FALSE,header_perso=TRUE)
+```

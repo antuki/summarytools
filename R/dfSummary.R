@@ -74,6 +74,7 @@
 #'   `style = "grid"`. See \emph{Details}.
 #' @param silent Logical. Hide console messages. \code{FALSE} by default. To 
 #'   change this value globally, see \code{\link{st_options}}.
+#' @param header_perso vaut vrai si on veut ajouter un header personnalisé de Kim
 #' @param \dots Additional arguments passed to \code{\link[pander]{pander}}.
 #'
 #' @return A data frame with additional class \code{summarytools} containing as
@@ -165,7 +166,9 @@ dfSummary <- function(x, round.digits = st_options("round.digits"),
                       split.cells = 40,
                       split.tables = Inf,
                       tmp.img.dir = st_options('tmp.img.dir'),
-                      silent = st_options('dfSummary.silent'), ...) {
+                      silent = st_options('dfSummary.silent'),
+                      header_perso = FALSE,
+                      ...) {
   
 
   # Validate arguments ---------------------------------------------------------
@@ -266,7 +269,11 @@ dfSummary <- function(x, round.digits = st_options("round.digits"),
   
   # Column of weight -----------------------------------------------------------
   if(!is.null(column_weight)){
-    column_weight <- x[[column_weight]]
+    column_weight2 <- x[[column_weight]]
+     #x <- x[,!colnames(x)==column_weight]
+     x <- x %>% select(-column_weight)
+     column_weight <- column_weight2
+     rm(column_weight2)
   }
   
   # iterate over columns of x --------------------------------------------------
@@ -417,7 +424,8 @@ dfSummary <- function(x, round.digits = st_options("round.digits"),
                       labels.col     = labels.col,
                       split.cells    = split.cells,
                       split.tables   = split.tables,
-                      col.widths     = col.widths)
+                      col.widths     = col.widths, 
+                      header_perso   = header_perso)
   
   attr(output, "format_info") <- format_info[!is.na(format_info)]
   
@@ -748,18 +756,23 @@ crunch_numeric <- function(column_data, column_weight, is_barcode) {
           trs("min"), strrep(" ", maxchars - nchar(trs("min"))), " : ",
           round(min(column_data, na.rm = TRUE), round.digits - 1), "\\\n",
           trs("mean"), strrep(" ", maxchars - nchar(trs("mean"))), " : ",
-          round(mean(column_data, na.rm = TRUE), round.digits - 1), "\\\n",
+         # round(mean(column_data, na.rm = TRUE), round.digits - 1),
+         round(questionr::wtd.mean(column_data, weights=column_weight, na.rm = TRUE), round.digits - 1),
+         "\\\n",
           trs("max"), strrep(" ", maxchars - nchar(trs("max"))), " : ",
           round(max(column_data, na.rm = TRUE), round.digits - 1)
         )
       } else {
         outlist[[1]] <- paste(
           trs("mean"), paste0(" (", trs("sd"), ") : "),
-          round(mean(column_data, na.rm = TRUE), round.digits - 1),
+          #round(mean(column_data, na.rm = TRUE), round.digits - 1),
+          round(questionr::wtd.mean(column_data, weights=column_weight, na.rm = TRUE), round.digits - 1),
           " (", round(sd(column_data, na.rm = TRUE), round.digits - 1), ")\\\n",
           tolower(paste(trs("min"), "<", trs("med.short"), "<", trs("max"))),
           ":\\\n", round(min(column_data, na.rm = TRUE), round.digits - 1),
-          " < ", round(median(column_data, na.rm = TRUE), round.digits - 1),
+          " < ",
+          #round(median(column_data, na.rm = TRUE), round.digits - 1),
+          round(spatstat::weighted.median(column_data, w=if(!is.null(column_weight)){column_weight}else{rep(1,length(column_data))},na.rm = TRUE), round.digits - 1),
           " < ", round(max(column_data, na.rm = TRUE), round.digits - 1), "\\\n",
           paste0(trs("iqr"), " (", trs("cv"), ") : "),
           round(IQR(column_data, na.rm = TRUE), round.digits - 1),
@@ -913,7 +926,10 @@ crunch_time_date <- function(column_data, column_weight) {
         
         outlist[[1]] <- paste0(
           tolower(trs("min")), " : ", tmin <- min(as.numeric(column_data), na.rm = TRUE), "\\\n",
-          tolower(trs("med.short")), " : ", median(as.numeric(column_data), na.rm = TRUE), "\\\n",
+          tolower(trs("med.short")), " : ",
+          #median(as.numeric(column_data), na.rm = TRUE),
+          spatstat::weighted.median(column_data, w=if(!is.null(column_weight)){column_weight}else{rep(1,length(column_data))},na.rm = TRUE),
+          "\\\n",
           tolower(trs("max")), " : ", tmax <- max(as.numeric(column_data), na.rm = TRUE)
         )
         
@@ -924,7 +940,10 @@ crunch_time_date <- function(column_data, column_weight) {
       } else {
         outlist[[1]] <- paste0(
           tolower(trs("min")), " : ", tmin <- min(column_data, na.rm = TRUE), "\\\n",
-          tolower(trs("med.short")), " : ", median(column_data, na.rm = TRUE), "\\\n",
+          tolower(trs("med.short")), " : ",
+          #median(column_data, na.rm = TRUE),
+          spatstat::weighted.median(column_data, w=if(!is.null(column_weight)){column_weight}else{rep(1,length(column_data))},na.rm = TRUE),
+          "\\\n",
           tolower(trs("max")), " : ", tmax <- max(column_data, na.rm = TRUE), "\\\n",
           "range : ", sub(pattern = " 0H 0M 0S", replacement = "",
                           x = round(as.period(interval(tmin, tmax)),round.digits))
