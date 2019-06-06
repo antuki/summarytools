@@ -19,7 +19,7 @@ dfSummary(x, round.digits = st_options("round.digits"),
   max.distinct.values = 10, trim.strings = FALSE,
   max.string.width = 25, split.cells = 40, split.tables = Inf,
   tmp.img.dir = st_options("tmp.img.dir"),
-  silent = st_options("dfSummary.silent"), ...)
+  silent = st_options("dfSummary.silent"), header_perso = FALSE, ...)
 }
 \arguments{
 \item{x}{A data frame.}
@@ -114,6 +114,8 @@ rendering dfSummary() with `method = "pander"`, `plain.ascii = TRUE` and
 
 \item{silent}{Logical. Hide console messages. \code{FALSE} by default. To 
 change this value globally, see \code{\link{st_options}}.}
+
+\item{header_perso}{vaut vrai si on veut ajouter un header personnalisé de Kim}
 
 \item{\dots}{Additional arguments passed to \code{\link[pander]{pander}}.}
 }

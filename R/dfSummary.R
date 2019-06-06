@@ -425,7 +425,8 @@ dfSummary <- function(x, round.digits = st_options("round.digits"),
                       split.cells    = split.cells,
                       split.tables   = split.tables,
                       col.widths     = col.widths, 
-                      header_perso   = header_perso)
+                      header_perso   = header_perso,
+                      header_perso_txt = NULL)
   
   attr(output, "format_info") <- format_info[!is.na(format_info)]
   

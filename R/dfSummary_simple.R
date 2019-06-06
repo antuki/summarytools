@@ -1,10 +1,12 @@
-#' New functions from antuki
+#' dfSummary_simple
 #'
 #'
-#' @param bdd Compléter
-#' @param nom_var Compléter
-#' @param poids Compléter
-#' @param filtres Compléter
+#' @param bdd Completer
+#' @param nom_var Completer
+#' @param nom_croisement Completer
+#' @param poids Completer
+#' @param filtres Completer
+#' @param header_perso Completer
 #' @author antuki
 #' @export
 dfSummary_simple <- function(bdd,
@@ -12,8 +14,7 @@ dfSummary_simple <- function(bdd,
                              nom_croisement=NULL,
                              poids=NULL,
                              filtres=NULL,
-                             header_perso=TRUE,
-                             ...) {
+                             header_perso=TRUE) {
 
   if(!is.null(filtres)){
     bdd <- bdd %>% filter(eval(parse(text=filtres)))
@@ -34,7 +35,7 @@ dfSummary_simple <- function(bdd,
       bdd_filtree <- bdd %>%
         filter(eval(parse(text=paste0("as.numeric(",nom_croisement,")=='",modalite,"'")))) %>% 
         select(c(nom_var,poids))
-      df_prov <- dfSummary(bdd_filtree,headings = FALSE,header_perso=header_perso,column_weight = "poids")
+      df_prov <- dfSummary(bdd_filtree,headings = TRUE,header_perso=header_perso,column_weight = "poids")
       df_prov$Variable <- paste0(df_prov$Variable,"\\\nfiltre : ",nom_croisement,"=",names(modalites[which(modalites==modalite)]))
       df <- rbind(df,df_prov)
     }
@@ -45,12 +46,13 @@ dfSummary_simple <- function(bdd,
   
   #Ajout du header
   if(header_perso){
-  #if(1+1==3){
-    attr(df, "format_info")$header_perso_txt <- c(
-      ifelse(!is.null(filtres),paste0("**Champ : **", filtres,"</br>"),NULL),
-      ifelse(!is.null(poids),paste0("**Pondération : **", poids,"</br>" ),NULL),
-      ifelse(!is.null(nom_croisement),paste0("**Croisement : **", nom_croisement,"</br>" ),NULL)
+     attr(df, "format_info")$header_perso_txt <- c("</h1><h6>",
+      switch(!is.null(filtres),paste0("<strong>Champ</strong> : ", filtres,"</br>"),NULL),
+      switch(!is.null(poids),paste0("**Ponderation** : ", poids,"</br>" ),NULL),
+      switch(!is.null(nom_croisement), paste0("**Croisement** : ", nom_croisement,"</br>" ),NULL),
+      "</h6>"
     )
+    
   }
  
   return(df)
@@ -58,11 +60,12 @@ dfSummary_simple <- function(bdd,
 }
 
 
-
-#' @param df compléter
+#' header_perso_func
+#'
+#' @param df Completer
 #' @author antuki
 #' @export
-header_perso_func <- function(df,...) {
+header_perso_func <- function(df) {
   #return("\n#HOHO</br>mhhh\n*h*</br>#HIHI\n")
   if(attr(df, "format_info")$header_perso & !is.null(attr(df, "format_info")$header_perso_txt)){
     return(attr(df, "format_info")$header_perso_txt)
@@ -71,3 +74,4 @@ header_perso_func <- function(df,...) {
   }
 
 }
+

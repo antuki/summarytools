@@ -493,11 +493,11 @@ print.summarytools <- function(x,
     
     ####### header personnalisé Kim #####
     if(attr(x, "st_type")=="dfSummary" && attr(x, "format_info")$header_perso){
-       ajout <- header_perso_func(x)
-       cat(do.call(paste0, c(ajout,res)), file = file, append = append)
-    }else{
-      cat(do.call(paste0, res), file = file, append = append)
+      res[[length(res)]] <- c(header_perso_func(x),res[[length(res)]])
+      #str(res)
     }
+    
+    cat(do.call(paste0, res), file = file, append = append)
     
 
       if (file != "" && !isTRUE(silent)) {
