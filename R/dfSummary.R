@@ -151,6 +151,7 @@ dfSummary <- function(x, round.digits = st_options("round.digits"),
                       varnumbers = st_options("dfSummary.varnumbers"),
                       labels.col = st_options("dfSummary.labels.col"),
                       valid.col = st_options("dfSummary.valid.col"),
+                      var.col = st_options("dfSummary.var.col"),
                       na.col = st_options("dfSummary.na.col"),
                       graph.col = st_options("dfSummary.graph.col"),
                       graph.magnif = st_options("dfSummary.graph.magnif"),
@@ -370,6 +371,11 @@ dfSummary <- function(x, round.digits = st_options("round.digits"),
     output$no <- NULL
   }
   
+  #NEW KIM
+  if (!isTRUE(var.col)) {
+    output$variable <- NULL
+  }
+  
   if (!isTRUE(labels.col)) {
     output$label <- NULL
   }
@@ -382,6 +388,7 @@ dfSummary <- function(x, round.digits = st_options("round.digits"),
   if (!isTRUE(valid.col)) {
     output$valid <- NULL
   }
+  
   
   if (!isTRUE(na.col)) {
     output$missing <- NULL
@@ -426,6 +433,7 @@ dfSummary <- function(x, round.digits = st_options("round.digits"),
                       split.tables   = split.tables,
                       col.widths     = col.widths, 
                       header_perso   = header_perso,
+                      val.col        = var.col,
                       header_perso_txt = NULL)
   
   attr(output, "format_info") <- format_info[!is.na(format_info)]
@@ -1010,7 +1018,7 @@ crunch_other <- function(column_data, column_weight) {
 align_numbers_dfs <- function(counts, props) {
   
   #parent.frame not working a debuguer
-  round.digits.count <- 1
+  round.digits.count <- 0
   
   maxchar_cnt <- nchar(as.character(round(max(counts),round.digits.count)))
   maxchar_pct <- nchar(as.character(round(max(props*100),parent.frame()$round.digits)))

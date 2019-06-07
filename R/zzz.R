@@ -48,6 +48,7 @@ utils::globalVariables(c("."))
                  "dfSummary.labels.col"   = TRUE,
                  "dfSummary.graph.col"    = TRUE,
                  "dfSummary.valid.col"    = TRUE,
+                 "dfSummary.var.col"      = TRUE,
                  "dfSummary.na.col"       = TRUE,
                  "dfSummary.graph.magnif" = 1,
                  "dfSummary.silent"       = FALSE,

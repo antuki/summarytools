@@ -65,6 +65,8 @@
 #' @param dfSummary.valid.col Logical. In \code{\link{dfSummary}}, include
 #'   column indicating count and proportion of valid (non-missing). \code{TRUE}
 #'   by default.
+##' @param dfSummary.var.col Logical. In \code{\link{dfSummary}}, include
+#'   Variable column. \code{TRUE} by default.
 #' @param dfSummary.na.col Logical. In \code{\link{dfSummary}}, include column
 #'   indicating count and proportion of missing (NA) values. \code{TRUE} by
 #'   default.
@@ -144,6 +146,7 @@ st_options <- function(option                 = NULL,
                        dfSummary.varnumbers   = TRUE, 
                        dfSummary.labels.col   = TRUE, 
                        dfSummary.valid.col    = TRUE, 
+                       dfSummary.var.col      = TRUE, 
                        dfSummary.na.col       = TRUE, 
                        dfSummary.graph.col    = TRUE, 
                        dfSummary.graph.magnif = 1,
@@ -225,6 +228,7 @@ st_options <- function(option                 = NULL,
                    "dfSummary.labels.col"   = TRUE,
                    "dfSummary.graph.col"    = TRUE,
                    "dfSummary.valid.col"    = TRUE,
+                   "dfSummary.var.col"      = TRUE,
                    "dfSummary.na.col"       = TRUE,
                    "dfSummary.graph.magnif" = 1,
                    "dfSummary.silent"       = FALSE,

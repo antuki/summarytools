@@ -1,5 +1,5 @@
 ---
-title: "New propositions of functionnalities for summarytools"
+title: "New functionalities for summarytools"
 author: "antuki"
 date: "`r Sys.Date()`"
 output: 
@@ -23,7 +23,9 @@ st_css()
 st_options(bootstrap.css     = FALSE,       # Already part of the theme so no need for it
            plain.ascii       = FALSE,       # One of the essential settings
            style             = "rmarkdown", # Idem.
-           dfSummary.silent  = TRUE,        # Suppresses messages about temporary files
+           round.digits = 1, #nombre de chiffres après la virgule pour les pourcentages
+           dfSummary.silent  = TRUE,   # Suppresses messages about temporary files
+           dfSummary.varnumbers = FALSE,
            footnote          = NA,          # Keeping the results minimalistic
            subtitle.emphasis = FALSE)       # For the vignette theme, this gives
                                             # much better results. Your mileage may vary.
@@ -31,55 +33,50 @@ st_options(bootstrap.css     = FALSE,       # Already part of the theme so no ne
 ```
 
 
-
-
-Préparation des données :
+## Prepare data from questionr package
 
 ```{r eval=FALSE}
 library(dplyr)
 library(questionr)
 data(hdv2003)
-hdv2003 <- hdv2003 %>% select(sexe,poids)
 ```
 
 ```{r include=FALSE}
 library(dplyr)
 library(questionr)
 data(hdv2003)
-hdv2003 <- hdv2003 %>% select(sexe,poids)
 ```
 
-Aperçu des stats desc : 
+## dfSummary from the initial summarytools package
 
 ```{r}
-print(wtd.table(hdv2003$sexe, weights=hdv2003$poids))
-print(wtd.table(hdv2003$sexe))
+dfSummary(hdv2003 %>% select(age,sexe),column_weight =NULL)
 ```
 
-Reproduction avec dfSummary
+## dfSummary with weights
+(new option implemented)
 
 ```{r}
-df <- dfSummary(hdv2003)
-dfSummary(hdv2003,column_weight = "poids")
+dfSummary(hdv2003 %>% select(age,sexe,poids),column_weight = "poids")
 ```
 
-Test d'une fonction simplifiée : 
-```{r}
-data(hdv2003)
-```
 
-Sans variable de croisement
-```{r}
-dfSummary_simple(bdd=hdv2003,nom_var="clso",nom_croisement=NULL,poids="poids",filtres="freres.soeurs!=8",header_perso=TRUE)
-```
-
-Avec variable de croisement
-```{r}
-#dfSummary_simple(bdd=hdv2003,nom_var="clso",nom_croisement="occup",poids="poids",filtres="freres.soeurs!=8")
-```
-
-Tester header personnalisé
+## Simple summary with weight
+variable clso with weight ("poids" variable)
 
 ```{r}
-#dfSummary(hdv2003,headings=FALSE,header_perso=TRUE)
+dfSummary_simple(bdd=hdv2003,nom_var="clso",nom_croisement=NULL,column_weight="poids")
 ```
+
+## With a filter 
+filter : (freres.soeurs!=8")
+```{r}
+dfSummary_simple(bdd=hdv2003,nom_var="clso",nom_croisement=NULL,column_weight="poids",filtres="freres.soeurs!=8")
+```
+
+## With cross-tabulation 
+cross-tabulation = (occup variable) => one line for each modality of the cross-tabulation
+```{r}
+dfSummary_simple(bdd=hdv2003,nom_var="clso",nom_croisement="occup",column_weight="poids",filtres="freres.soeurs!=8",header_perso=TRUE)
+```
+

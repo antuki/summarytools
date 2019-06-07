@@ -444,6 +444,11 @@ check_arguments_st_options <- function(mc) {
                            len = 1, any.missing = FALSE))) {
     errmsg %+=% "'dfSummary.valid.col' must be either TRUE or FALSE"
   }
+  if ("dfSummary.var.col" %in% names(mc) &&
+      !isTRUE(test_logical(pf$dfSummary.var.col,
+                           len = 1, any.missing = FALSE))) {
+    errmsg %+=% "'dfSummary.var.col' must be either TRUE or FALSE"
+  }
   if ("dfSummary.na.col" %in% names(mc) &&
       !isTRUE(test_logical(pf$dfSummary.na.col, 
                            len = 1, any.missing = FALSE))) {

@@ -79,6 +79,7 @@
 #'      \item \code{labels.col}    (\code{\link{dfSummary}} objects)
 #'      \item \code{graph.col}     (\code{\link{dfSummary}} objects)
 #'      \item \code{valid.col}     (\code{\link{dfSummary}} objects)
+#'      \item \code{var.col}       (\code{\link{dfSummary}} objects)
 #'      \item \code{na.col}         (\code{\link{dfSummary}} objects)
 #'      \item \code{col.widths}     (\code{\link{dfSummary}} objects)
 #'      \item \code{split.tables}
@@ -336,6 +337,7 @@ print.summarytools <- function(x,
                            "missing", "headings", "display.labels",
                            "display.type", "varnumbers", "labels.col", 
                            "graph.col", "col.widths", "header_perso","header_perso_txt", "na.col", "valid.col", 
+                           "var.col",
                            "split.tables", "omit.headings")) {
     if (format_element %in% names(dotArgs)) {
       if (format_element == "omit.headings") {
@@ -493,8 +495,7 @@ print.summarytools <- function(x,
     
     ####### header personnalisé Kim #####
     if(attr(x, "st_type")=="dfSummary" && attr(x, "format_info")$header_perso){
-      res[[length(res)]] <- c(header_perso_func(x),res[[length(res)]])
-      #str(res)
+      res[[length(res)]] <- c(header_perso_func(x),res[[length(res)]],"</br>")
     }
     
     cat(do.call(paste0, res), file = file, append = append)
@@ -1410,6 +1411,14 @@ print_dfs <- function(x, method) {
     x <- x[ ,-which(names(x) == trs("no"))]
   }
   
+  #NEW
+  # Remove Var ncolumn if specified in call to print/view
+  if (trs("variable") %in% names(x) && 
+      "var.col" %in% names(format_info) && 
+      !isTRUE(format_info$var.col)) {
+    x <- x[ ,-which(names(x) == trs("variable"))]
+  }
+  
   # Remove Label column if specified in call to print/view
   if (trs("label") %in% names(x) && 
       "labels.col" %in% names(format_info) && 
@@ -1423,6 +1432,7 @@ print_dfs <- function(x, method) {
       !isTRUE(format_info$valid.col)) {
     x <- x[ ,-which(names(x) == trs("valid"))]
   }
+  
   
   # Remove Missing column if specified in call to print/view
   if (trs("missing") %in% names(x) && 
