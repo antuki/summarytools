@@ -50,8 +50,8 @@ dfSummary_simple <- function(bdd,
   if(header_perso){
    # attr(df, "format_info")$header_perso_txt <- "###Résultats\n**h** : KA</br>**h** : KB\n"
      attr(df, "format_info")$header_perso_txt <- paste(c(
-       # paste0("###Résultats sur la variable : ",paste0(nom_var, " [",paste(class(bdd[,nom_var]),"]", collapse = "")),"\n"),
-        paste0("###Résultats sur la variable : ", nom_var, " [",class(bdd[,nom_var]),"]","\n"),
+       # paste0("Résultats sur la variable : ",paste0(nom_var, " [",paste(class(bdd[,nom_var]),"]", collapse = "")),"\n"),
+        paste0("</br></br>**Résultats sur la variable : ", nom_var, " [",class(bdd[,nom_var]),"]**","</br>"),
         switch(!is.null(filtres),paste0("**Filtre** : ", filtres,"</br>"),paste0("**Filtre** : ", "Aucun","</br>")),
       switch(!is.null(column_weight),paste0("**Ponderation** : ", column_weight,"</br>" ),paste0("**Ponderation** : ","Aucune","</br>" )),
       switch(!is.null(nom_croisement), paste0("**Croisement** : ", nom_croisement,"</br>" ),NULL),

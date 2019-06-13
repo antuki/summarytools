@@ -47,6 +47,18 @@ library(questionr)
 data(hdv2003)
 ```
 
+## tests divers
+
+
+```{r}
+hdv2003 <- hdv2003 %>%
+  mutate(var_encod = sample(c(1,2),2000, replace=TRUE)) %>% 
+  mutate(var_encod = factor(var_encod,labels=iconv(c("Héhé","L'horreur"),to="UTF-8")))
+
+
+dfSummary(hdv2003 %>% select(age,var_encod),column_weight =NULL)
+```
+
 ## dfSummary from the initial summarytools package
 
 ```{r}
@@ -76,7 +88,8 @@ dfSummary_simple(bdd=hdv2003,nom_var="clso",nom_croisement=NULL,column_weight="p
 
 ## With cross-tabulation 
 cross-tabulation = (occup variable) => one line for each modality of the cross-tabulation
-```{r}
+```{r echo=FALSE}
+dfSummary_simple(bdd=hdv2003,nom_var="clso",nom_croisement="occup",column_weight="poids",filtres="freres.soeurs!=8",header_perso=TRUE)
 dfSummary_simple(bdd=hdv2003,nom_var="clso",nom_croisement="occup",column_weight="poids",filtres="freres.soeurs!=8",header_perso=TRUE)
 ```
 
