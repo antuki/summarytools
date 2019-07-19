@@ -52,11 +52,10 @@ data(hdv2003)
 
 ```{r}
 hdv2003 <- hdv2003 %>%
-  mutate(var_encod = sample(c(1,2),2000, replace=TRUE)) %>% 
+  mutate(var_encod = c(sample(c(1,2),1990, replace=TRUE),rep(NA,10))) %>% 
   mutate(var_encod = factor(var_encod,labels=iconv(c("Héhé","L'horreur"),to="UTF-8")))
 
-
-dfSummary(hdv2003 %>% select(age,var_encod),column_weight =NULL)
+dfSummary(hdv2003 %>% select(age,var_encod, poids),column_weight ="poids")
 ```
 
 ## dfSummary from the initial summarytools package

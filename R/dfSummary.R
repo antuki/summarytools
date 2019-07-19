@@ -288,8 +288,10 @@ dfSummary <- function(x, round.digits = st_options("round.digits"),
     output[i,1] <- i
 
     # Calculate valid vs missing data info
-    n_miss <- sum(is.na(column_data))
-    n_valid <- n_tot - n_miss
+    # n_miss <- sum(is.na(column_data))
+    # n_valid <- n_tot - n_miss
+    n_miss <- sum(is.na(column_data) * column_weight[is.na(column_data)])
+    n_valid <- n_tot - sum(is.na(column_data))
     
     # Add column name and class
     output[i,2] <- paste0(names(x)[i], "\\\n[",
@@ -363,7 +365,8 @@ dfSummary <- function(x, round.digits = st_options("round.digits"),
     output[i,8] <-
       paste0(n_valid, "\\\n(", round(n_valid / n_tot * 100, round.digits), "%)")
     output[i,9] <-
-      paste0(n_miss,  "\\\n(", round(n_miss  / n_tot * 100, round.digits), "%)")
+    #  paste0(n_miss,  "\\\n(", round(n_miss  / n_tot * 100, round.digits), "%)")
+      paste0(round(n_miss,0),  "\\\n(", round(n_miss  / ifelse(!is.null(column_weight),sum(column_weight),n_tot) * 100, round.digits), "%)")
   }
   
   # Prepare output object ------------------------------------------------------
