@@ -290,7 +290,7 @@ dfSummary <- function(x, round.digits = st_options("round.digits"),
     # Calculate valid vs missing data info
     # n_miss <- sum(is.na(column_data))
     # n_valid <- n_tot - n_miss
-    n_miss <- sum(is.na(column_data) * column_weight[is.na(column_data)])
+    n_miss <- sum(is.na(column_data) * column_weight)
     n_valid <- n_tot - sum(is.na(column_data))
     
     # Add column name and class
